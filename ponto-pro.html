@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Ponto - PontoPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #1a237e;
+            border-bottom: 3px solid #1a237e;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            border-color: #1a237e;
+            outline: none;
+        }
+        
+        .btn {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: #3949ab;
+            transform: translateY(-2px);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .card h3 {
+            color: #1a237e;
+            margin-bottom: 10px;
+        }
+        
+        .card .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3949ab;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .control-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .start { background: #4CAF50; color: white; }
+        .pause { background: #FF9800; color: white; }
+        .end { background: #f44336; color: white; }
+        
+        .features {
+            background: #f0f4ff;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .features h3 {
+            color: #1a237e;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 600px) {
+            .dashboard, .controls, .feature-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 PontoPro</h1>
+            <p>Sistema Profissional de Controle de Ponto</p>
+        </div>
+        
+        <div class="content">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab('login')">🔐 Login</button>
+                <button class="tab-btn" onclick="openTab('register')">📝 Cadastro</button>
+                <button class="tab-btn" onclick="openTab('system')">💼 Sistema</button>
+                <button class="tab-btn" onclick="openTab('pricing')">💰 Planos</button>
+            </div>
+            
+            <!-- TAB LOGIN -->
+            <div id="login" class="tab-content active">
+                <h2 style="color: #1a237e; margin-bottom: 20px;">Acesse sua conta</h2>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="loginPassword" placeholder="Sua senha">
+                </div>
+                <button class="btn" onclick="login()">Entrar no Sistema</button>
+                <p style="text-align: center; margin-top: 15px; color: #666;">
+                    Novo usuário? <a href="#" onclick="openTab('register')" style="color: #1a237e; font-weight: bold;">Cadastre-se aqui</a>
+                </p>
+            </div>
+            
+            <!-- TAB CADASTRO -->
+            <div id="register" class="tab-content">
+                <h2 style="color: #1a237e; margin-bottom: 20px;">Crie sua conta</h2>
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="regName" placeholder="Seu nome">
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="regEmail" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Conta</label>
+                    <select id="accountType" style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #ddd;">
+                        <option value="individual">👤 Profissional Individual</option>
+                        <option value="company">🏢 Empresa</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="register()">Criar Conta</button>
+            </div>
+            
+            <!-- TAB SISTEMA -->
+            <div id="system" class="tab-content">
+                <h2 style="color: #1a237e; margin-bottom: 20px;">📊 Painel de Controle</h2>
+                
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>⏱️ Horas Hoje</h3>
+                        <div class="number" id="hoursToday">0:00</div>
+                    </div>
+                    <div class="card">
+                        <h3>📅 Dias Trabalhados</h3>
+                        <div class="number" id="daysWorked">0</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 25px 0;">
+                    <div style="font-size: 48px; color: #1a237e; font-weight: bold;" id="clock">00:00:00</div>
+                    <div style="color: #666; margin-top: 10px;" id="status">Status: Fora do expediente</div>
+                </div>
+                
+                <div class="controls">
+                    <button class="control-btn start" onclick="startWork()">
+                        <div style="font-size: 24px;">▶️</div>
+                        Iniciar
+                    </button>
+                    <button class="control-btn pause" onclick="pauseWork()">
+                        <div style="font-size: 24px;">⏸️</div>
+                        Pausa
+                    </button>
+                    <button class="control-btn end" onclick="endWork()">
+                        <div style="font-size: 24px;">⏹️</div>
+                        Encerrar
+                    </button>
+                </div>
+                
+                <div class="features">
+                    <h3>Recursos Disponíveis</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">📍 Geolocalização</div>
+                        <div class="feature-item">📊 Relatórios</div>
+                        <div class="feature-item">📱 App Mobile</div>
+                        <div class="feature-item">👥 Equipes</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB PLANOS -->
+            <div id="pricing" class="tab-content">
+                <h2 style="color: #1a237e; margin-bottom: 20px; text-align: center;">Escolha seu Plano</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; text-align: center;">
+                        <h3 style="color: #1a237e;">Básico</h3>
+                        <div style="font-size: 32px; font-weight: bold; color: #3949ab; margin: 15px 0;">R$ 29<span style="font-size: 16px;">/mês</span></div>
+                        <ul style="text-align: left; margin: 20px 0; padding-left: 20px;">
+                            <li>1 usuário</li>
+                            <li>Controle de ponto</li>
+                            <li>Relatórios básicos</li>
+                            <li>Suporte por e-mail</li>
+                        </ul>
+                        <button class="btn" style="background: #666;">Selecionar</button>
+                    </div>
+                    
+                    <div style="background: #1a237e; color: white; padding: 25px; border-radius: 10px; text-align: center;">
+                        <h3 style="color: white;">Pro</h3>
+                        <div style="font-size: 32px; font-weight: bold; color: white; margin: 15px 0;">R$ 99<span style="font-size: 16px;">/mês</span></div>
+                        <ul style="text-align: left; margin: 20px 0; padding-left: 20px;">
+                            <li>10 usuários</li>
+                            <li>Controle completo</li>
+                            <li>Relatórios avançados</li>
+                            <li>Geolocalização</li>
+                            <li>Suporte prioritário</li>
+                        </ul>
+                        <button class="btn" style="background: #00b0ff;">Selecionar</button>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; text-align: center;">
+                        <h3 style="color: #1a237e;">Empresarial</h3>
+                        <div style="font-size: 32px; font-weight: bold; color: #3949ab; margin: 15px 0;">R$ 299<span style="font-size: 16px;">/mês</span></div>
+                        <ul style="text-align: left; margin: 20px 0; padding-left: 20px;">
+                            <li>Usuários ilimitados</li>
+                            <li>Todos os recursos</li>
+                            <li>API integração</li>
+                            <li>Treinamento</li>
+                            <li>Suporte 24/7</li>
+                        </ul>
+                        <button class="btn" style="background: #666;">Selecionar</button>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; margin-top: 25px; color: #666;">
+                    Todos os planos incluem teste gratuito de 14 dias!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funções para trocar abas
+        function openTab(tabName) {
+            // Esconde todas as abas
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove classe active de todos os botões
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostra a aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            
+            // Ativa o botão correspondente
+            event.target.classList.add('active');
+        }
+        
+        // Simulação de login
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if(email && password) {
+                alert('Login realizado com sucesso! Redirecionando para o sistema...');
+                openTab('system');
+                updateClock();
+            } else {
+                alert('Por favor, preencha todos os campos!');
+            }
+        }
+        
+        // Simulação de cadastro
+        function register() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            if(name && email && password) {
+                alert('Conta criada com sucesso! Faça login para acessar o sistema.');
+                openTab('login');
+            } else {
+                alert('Por favor, preencha todos os campos!');
+            }
+        }
+        
+        // Variáveis do sistema de ponto
+        let isWorking = false;
+        let isPaused = false;
+        let startTime = null;
+        let totalSeconds = 0;
+        let timerInterval = null;
+        
+        // Atualiza o relógio
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('clock').textContent = timeString;
+            
+            if(isWorking && !isPaused && startTime) {
+                const currentTime = new Date();
+                const diff = Math.floor((currentTime - startTime) / 1000);
+                totalSeconds = diff;
+                
+                const hours = Math.floor(diff / 3600);
+                const minutes = Math.floor((diff % 3600) / 60);
+                const seconds = diff % 60;
+                
+                const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('hoursToday').textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+                document.getElementById('clock').textContent = timeStr;
+            }
+            
+            setTimeout(updateClock, 1000);
+        }
+        
+        // Iniciar trabalho
+        function startWork() {
+            if(!isWorking) {
+                isWorking = true;
+                isPaused = false;
+                startTime = new Date();
+                document.getElementById('status').textContent = 'Status: Trabalhando';
+                alert('Jornada iniciada!');
+            }
+        }
+        
+        // Pausar trabalho
+        function pauseWork() {
+            if(isWorking && !isPaused) {
+                isPaused = true;
+                document.getElementById('status').textContent = 'Status: Em pausa';
+                alert('Pausa iniciada');
+            } else if(isWorking && isPaused) {
+                isPaused = false;
+                document.getElementById('status').textContent = 'Status: Trabalhando';
+                alert('Retomando trabalho');
+            }
+        }
+        
+        // Encerrar trabalho
+        function endWork() {
+            if(isWorking) {
+                isWorking = false;
+                isPaused = false;
+                document.getElementById('status').textContent = 'Status: Jornada encerrada';
+                
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                
+                const days = parseInt(document.getElementById('daysWorked').textContent) + 1;
+                document.getElementById('daysWorked').textContent = days;
+                
+                alert(`Jornada encerrada! Total hoje: ${hours}h${minutes}m`);
+                totalSeconds = 0;
+            }
+        }
+        
+        // Inicia o relógio quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            updateClock();
+            document.getElementById('daysWorked').textContent = '0';
+            document.getElementById('hoursToday').textContent = '0:00';
+        });
+    </script>
+</body>
+</html>
